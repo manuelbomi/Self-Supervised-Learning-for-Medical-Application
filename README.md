@@ -102,7 +102,7 @@ All models pretrained on 50k unlabeled mammograms, then evaluated with 1% / 10% 
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/medical-ssl-framework.git
+git clone https://github.com/manuelbomi/medical-ssl-framework.git
 cd medical-ssl-framework
 pip install -r requirements.txt
 ```
