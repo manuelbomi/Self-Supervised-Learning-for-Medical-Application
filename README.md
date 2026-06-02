@@ -203,7 +203,7 @@ If you use this framework in your research, please cite:
 @software{medical_ssl_framework,
   title={Self-Supervised Learning Framework for Medical Image Representation Learning},
   author={Emmanuel Oyekanlu},
-  year={2023},
+  year={2025},
   url={https://github.com/yourusername/medical-ssl-framework}
 }
 ```
