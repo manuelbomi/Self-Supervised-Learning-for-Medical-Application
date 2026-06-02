@@ -1,0 +1,102 @@
+# DINO pretraining configuration for mammography images
+# Self-distillation with multi-crop for breast imaging.
+# ViT backbone preferred for attention-based spatial reasoning.
+
+method: dino
+
+# Data
+data:
+  data_dir: data/mammography
+  img_size: 224
+  in_channels: 1
+  label_file: null
+  supported_formats: [".dcm", ".png"]
+  clip_percentile: [0.5, 99.5]
+  num_workers: 8
+  pin_memory: true
+
+# Backbone (ViT-Small preferred for DINO)
+backbone:
+  name: vit_small
+  in_channels: 1
+  img_size: 224
+  patch_size: 16
+  embed_dim: 384
+  depth: 12
+  num_heads: 6
+  drop_path_rate: 0.1
+
+# DINO-specific
+dino:
+  # Projection head
+  proj_hidden_dim: 2048
+  proj_output_dim: 65536
+  proj_bottleneck_dim: 256
+  proj_num_layers: 3
+  proj_norm_last_layer: true
+
+  # Teacher EMA
+  ema_momentum_base: 0.996
+  ema_momentum_final: 1.0
+
+  # Loss
+  student_temperature: 0.1
+  teacher_temperature: 0.04
+  teacher_temp_warmup_epochs: 30
+  center_momentum: 0.9
+
+  # Multi-crop
+  num_global_crops: 2
+  num_local_crops: 6
+  global_crop_scale: [0.4, 1.0]
+  local_crop_scale: [0.05, 0.4]
+  local_crop_size: 96
+
+  # Training stability
+  freeze_last_layer_epochs: 1
+  clip_grad: 3.0
+
+# Augmentations
+augmentations:
+  random_rotation_degrees: 10.0
+  horizontal_flip_prob: 0.5
+  vertical_flip_prob: 0.0
+  brightness_range: [0.85, 1.15]
+  contrast_range: [0.85, 1.15]
+  gamma_range: [0.85, 1.15]
+  gaussian_noise_std: 0.015
+  gaussian_blur_prob: 0.3
+  gaussian_blur_sigma: [0.1, 2.0]
+  elastic_deformation_prob: 0.15
+  elastic_alpha: 40.0
+  elastic_sigma: 5.0
+
+# Training
+training:
+  epochs: 300
+  batch_size: 256
+  optimizer: adamw
+  base_lr: 5.0e-4
+  weight_decay: 0.04
+  betas: [0.9, 0.999]
+  warmup_epochs: 10
+  min_lr: 1.0e-6
+  lr_schedule: cosine
+  fp16: true
+  clip_grad: 3.0
+  gradient_accumulation_steps: 2
+
+# Checkpointing
+checkpoint:
+  dir: checkpoints/dino_mammography
+  save_every: 20
+
+# Logging
+logging:
+  log_every: 50
+  wandb_project: medical-ssl
+
+# Distributed
+distributed:
+  enabled: false
+  backend: nccl

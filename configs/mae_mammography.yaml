@@ -1,0 +1,84 @@
+# MAE pretraining configuration for mammography images
+# Masked autoencoding with ViT for learning structural priors
+# in breast tissue imaging.
+
+method: mae
+
+# Data
+data:
+  data_dir: data/mammography
+  img_size: 224
+  in_channels: 1
+  label_file: null
+  supported_formats: [".dcm", ".png"]
+  clip_percentile: [0.5, 99.5]
+  num_workers: 8
+  pin_memory: true
+
+# Backbone (ViT-Base encoder for MAE)
+backbone:
+  name: vit_base
+  in_channels: 1
+  img_size: 224
+  patch_size: 16
+  embed_dim: 768
+  depth: 12
+  num_heads: 12
+  drop_path_rate: 0.0  # No stochastic depth in MAE encoder
+
+# MAE-specific
+mae:
+  # Masking
+  mask_ratio: 0.75
+  masking_strategy: random  # random, block, grid
+  block_aspect_ratio: [0.3, 3.3]
+
+  # Decoder (lightweight)
+  decoder_embed_dim: 256
+  decoder_depth: 4
+  decoder_num_heads: 8
+
+  # Loss
+  norm_pix_loss: true
+  loss_on_masked_only: true
+  frequency_weight: 0.0  # Set >0 for structure-sensitive reconstruction
+
+# Augmentations (minimal for MAE - masking is the augmentation)
+augmentations:
+  random_rotation_degrees: 0.0
+  horizontal_flip_prob: 0.5
+  vertical_flip_prob: 0.0
+  # No intensity augmentation needed for MAE
+  gaussian_noise_std: 0.0
+  gaussian_blur_prob: 0.0
+  elastic_deformation_prob: 0.0
+
+# Training
+training:
+  epochs: 400
+  batch_size: 512
+  optimizer: adamw
+  base_lr: 1.5e-4
+  weight_decay: 0.05
+  betas: [0.9, 0.95]
+  warmup_epochs: 40
+  min_lr: 0.0
+  lr_schedule: cosine
+  fp16: true
+  clip_grad: 0.0
+  gradient_accumulation_steps: 1
+
+# Checkpointing
+checkpoint:
+  dir: checkpoints/mae_mammography
+  save_every: 50
+
+# Logging
+logging:
+  log_every: 50
+  wandb_project: medical-ssl
+
+# Distributed
+distributed:
+  enabled: false
+  backend: nccl

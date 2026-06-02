@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data (large files)
+data/
+*.dcm
+*.nii
+*.nii.gz
+
+# Model checkpoints (large files)
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.h5
+
+# Results and logs
+results/
+logs/
+wandb/
+runs/
+visualizations/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.env
